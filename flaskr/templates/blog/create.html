@@ -12,5 +12,11 @@
     <textarea name="body" id="body">{{ request.form['body'] }}</textarea>
     <input type="submit" value="Save">
     <a class="action" href="{{ url_for('blog.index') }}">Cancel</a>
+    <div>
+        <img src="{{ url_for('blog.main_plot') }}" alt="Image">
+    </div>
+    <div>
+        <img src="{{ url_for('blog.main_plot_2') }}" alt="Image">
+    </div>
   </form>
 {% endblock %}

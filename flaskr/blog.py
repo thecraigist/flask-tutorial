@@ -1,10 +1,17 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for, send_file, Response
 )
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from werkzeug.exceptions import abort
 
 from flaskr.auth import login_required
 from flaskr.db import get_db
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+import numpy as np
+from io import BytesIO
+import io
+import random
 
 bp = Blueprint('blog', __name__)
 
@@ -99,3 +106,67 @@ def delete(id):
     db.execute('DELETE FROM post WHERE id = ?', (id,))
     db.commit()
     return redirect(url_for('blog.index'))
+
+
+@bp.route('/main.png')
+def main_plot():
+    img = get_main_image()
+    return send_file(img, mimetype='image/png', cache_timeout=0)
+
+
+def get_main_image():
+    """Rendering the scatter chart"""
+    # yearly_temp = []
+    # yearly_hum = []
+    #
+    # for city in data:
+    #     yearly_temp.append(sum(get_city_temperature(city))/12)
+    #     yearly_hum.append(sum(get_city_humidity(city))/12)
+    #
+    # plt.clf()
+    # plt.scatter(yearly_hum, yearly_temp, alpha=0.5)
+    # plt.title('Yearly Average Temperature/Humidity')
+    # plt.xlim(70, 95)
+    # plt.ylabel('Yearly Average Temperature')
+    # plt.xlabel('Yearly Average Relative Humidity')
+    # for i, txt in enumerate(CITIES):
+    #     plt.annotate(txt, (yearly_hum[i], yearly_temp[i]))
+
+    xpoints = np.array([1, 2, 6, 8])
+    ypoints = np.array([3, 8, 1, 10])
+
+    plt.clf()
+    plt.plot(xpoints, ypoints)  # , marker = 'o'
+    plt.title("Sample Plot Graph")
+    plt.xlabel("X Axis")
+    plt.ylabel("Y Axis")
+
+    # plt.savefig('static/images/plot.png')
+
+    # https://www.jetbrains.com/help/pycharm/creating-web-application-with-flask.html
+    img = BytesIO()
+    plt.savefig(img)
+    # ?fig.savefig('path/to/save/image/to.png')
+    # pylab.savefig('foo.png')
+    img.seek(0)
+    return img
+
+
+@bp.route('/main2.png')
+def main_plot_2():
+    # Generate the figure **without using pyplot**.
+    # also maybe use https://gist.github.com/illume/1f19a2cf9f26425b1761b63d9506331f...?
+    # use chart.js instead of matplotlib?  plotly?
+    fig = create_figure()
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
+
+
+def create_figure():
+    fig = Figure()
+    axis = fig.add_subplot(1, 1, 1)
+    xs = range(100)
+    ys = [random.randint(1, 50) for x in xs]
+    axis.plot(xs, ys)
+    return fig

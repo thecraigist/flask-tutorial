@@ -11,9 +11,7 @@ from flask import Flask
 # if css not responding, hard refresh ctrl+shift+r
 
 
-# TODO commit to GIT as version1.0, continue below
 # TODO reply to a message (nested)
-# TODO add in charts and other things (https://www.jetbrains.com/help/pycharm/creating-web-application-with-flask.html)
 # TODO start new project specific to fantasy football; use matplotlib like in above example
 # TODO host on heroku? pythonanywhere?; use signals (pubsub) to notify league members when updated
 def create_app(test_config=None):
